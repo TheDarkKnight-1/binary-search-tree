@@ -100,6 +100,44 @@ int countFullNodes(struct node *p){
         return count;
     }
 }
+//find max
+struct node* FindMin(struct node* root)
+{
+	while(root->lchild != NULL) root = root->lchild;
+	return root;
+}
+//delete function
+struct node * deleteNode(struct node *p,int data){
+    if(p==NULL) return p;
+    else if(data<p->val) p->lchild=deleteNode(p->lchild,data);
+    else if(data>p->val) p->rchild=deleteNode(p->rchild,data);
+    else{
+        //NO child
+        if(p->lchild==NULL && p->rchild==NULL){
+            free(p);
+            p=NULL;
+        }
+        //1 left child
+        else if(p->rchild==NULL){
+            struct node *temp=p;
+            p=p->lchild;
+            free(p);
+        }
+        //1 right child
+        else if(p->lchild==NULL){
+            struct node *temp=p;
+            p=p->rchild;
+            free(p);
+        }
+        //2 nodes
+        else{
+            struct node *temp = FindMin(p->rchild);
+			p->val = temp->val;
+			p->rchild = deleteNode(p->rchild,temp->val);
+        }
+    }
+    return p;
+}
 int main()
 {
     struct node *root=NULL;
@@ -108,13 +146,16 @@ int main()
     insert(root,70);
     insert(root,65);
     insert(root,89);
-    //inorder(root);
+    inorder(root);
+    root=deleteNode(root,65);
+    printf("\n");
+    inorder(root);
     //printLeafnodes(root);
     //leftView(root);
     //printLeftChild(root);
     //int n = countNodes(root);
-    int n = countFullNodes(root);
-    printf ("%d",n);
+    //int n = countFullNodes(root);
+   // printf ("%d",n);
     return 0;
 }
 
